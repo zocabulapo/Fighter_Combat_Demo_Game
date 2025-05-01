@@ -5,7 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "Character/Character_Base.h"
 #include "GameFramework/DamageType.h"
-#include "Effect/EffectCombat.h" // 🧠 Include EffectCombat mới
+#include "Effect/EffectCombat.h" 
 
 void UAnimNotifyState_MeleeAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -44,7 +44,6 @@ void UAnimNotifyState_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, 
 
         if (ACharacter_Base* HitChar = Cast<ACharacter_Base>(HitActor))
         {
-            // 🔥 Gây damage
             FPointDamageEvent DamageEvent;
             DamageEvent.Damage = Damage;
             DamageEvent.HitInfo = HitResult;
@@ -57,8 +56,6 @@ void UAnimNotifyState_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, 
                 MeshComp->GetOwner()->GetInstigatorController(),
                 MeshComp->GetOwner()
             );
-
-            // 🔥 Gọi áp dụng Skill Effect
             if (SkillEffectType != ESkillEffectType::None)
             {
                 if (AEffectCombat* EffectCombat = MeshComp->GetWorld()->SpawnActor<AEffectCombat>(AEffectCombat::StaticClass()))
@@ -75,20 +72,16 @@ void UAnimNotifyState_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, 
             {
                 if (AFighter_Combat_Test1Character* Player = Cast<AFighter_Combat_Test1Character>(MeshComp->GetOwner()))
                 {
-                    if (Player->isFury) // Chỉ áp dụng buff nếu player đang ở trạng thái Fury
+                    if (Player->isFury) 
                     {
-                        // Tạo và áp dụng Buff lên đối tượng bị trúng đòn
                         if (ABase_Buff* BuffActor = MeshComp->GetWorld()->SpawnActor<ABase_Buff>(ABase_Buff::StaticClass()))
                         {
                             BuffActor->InitializeBuff(HitActor, BuffType);
-                            // Đảm bảo loại Buff và thời gian áp dụng được truyền vào
                         }
                     }
                 }
             }
         }
-
-        // 🔥 Update thông tin player (nếu là player)
         if (AFighter_Combat_Test1Character* Player = Cast<AFighter_Combat_Test1Character>(MeshComp->GetOwner()))
         {
             Player->LastHitEnemy = Cast<ACharacter>(HitActor);
