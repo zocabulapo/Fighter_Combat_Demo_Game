@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Engine/DamageEvents.h" // ✅ các include khác để ở trên
-#include "Character_Base.generated.h" // ✅ luôn là dòng cuối cùng trong phần include
+#include "Engine/DamageEvents.h" 
+#include "Character_Base.generated.h" 
 
 USTRUCT(BlueprintType)
 struct FStunMontageData
@@ -29,7 +29,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Máu tối đa và hiện tại
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	float MaxHP = 100.f;
 
@@ -37,13 +36,10 @@ protected:
 	float CurrentHP;
 
 public:	
-	// Gọi mỗi frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Xử lý khi nhận sát thương
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	// Map từ tên bone → struct chứa light & heavy montage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stun")
 	TMap<FName, FStunMontageData> StunMontages;
 
@@ -60,6 +56,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Combat")
 	bool isDead = false;
-	// Xử lý chết
 	virtual void Die();
 };
