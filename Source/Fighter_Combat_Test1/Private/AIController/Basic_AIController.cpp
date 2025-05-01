@@ -9,7 +9,6 @@
 
 ABasic_AIController::ABasic_AIController()
 {
-	// Không cần xử lý gì thêm trong constructor
 }
 
 void ABasic_AIController::OnPossess(APawn* InPawn)
