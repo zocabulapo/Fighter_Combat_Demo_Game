@@ -151,8 +151,6 @@ void AFighter_Combat_Test1Character::PerformHeavyAttack()
 		ComboInput = EComboInputType::HEAVY;
 		return;
 	}
-
-	// Nếu đang combo heavy rồi → queue tiếp
 	if (isAttacking)
 	{
 		ComboInput = EComboInputType::HEAVY;
