@@ -12,11 +12,7 @@ ACharacter_Base::ACharacter_Base()
 {
     PrimaryActorTick.bCanEverTick = true;
     CurrentHP = MaxHP;
-
-    // Cho phép MeleeTrace đụng trúng Mesh
     GetMesh()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
-
-    // Không cho MeleeTrace đụng Capsule
     GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);
 }
 void ACharacter_Base::BeginPlay()
@@ -45,8 +41,6 @@ float ACharacter_Base::TakeDamage(float DamageAmount, FDamageEvent const& Damage
         PhysMat = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
 
         FName MatName = PhysMat ? PhysMat->GetFName() : NAME_None;
-
-        // 🎯 Nếu trúng đầu → nhân đôi damage
         if (MatName == FName("HeadShoot"))
         {
             ActualDamage *= 2.f;
@@ -62,12 +56,8 @@ float ACharacter_Base::TakeDamage(float DamageAmount, FDamageEvent const& Damage
             true
         );
     }
-
-    // Cập nhật HP
     CurrentHP -= ActualDamage;
     CurrentHP = FMath::Clamp(CurrentHP, 0.0f, MaxHP);
-
-    UE_LOG(LogTemp, Warning, TEXT("[TakeDamage] Final Damage: %.2f | Current HP: %.2f"), ActualDamage, CurrentHP);
 
     if (CurrentHP <= 0.0f)
     {
@@ -75,12 +65,9 @@ float ACharacter_Base::TakeDamage(float DamageAmount, FDamageEvent const& Damage
         return ActualDamage;
     }
 
-    // Tính StunLevel
     int32 StunLevel = 0;
     if (ActualDamage >= HeavyStunThreshold)      StunLevel = 2;
     else if (ActualDamage >= LightStunThreshold) StunLevel = 1;
-
-    // Gửi sang Blackboard
     AAIController* AIController = Cast<AAIController>(GetController());
     if (AIController)
     {
@@ -101,7 +88,6 @@ void ACharacter_Base::Die()
 {
     if (isDead)
     {
-        // Nếu nhân vật đã chết, không làm gì thêm
         return;
     }
     isDead = true;
