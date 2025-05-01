@@ -11,26 +11,22 @@ void UAnimNotify_Control_Gravity::Notify(USkeletalMeshComponent* MeshComp, UAnim
 
     ACharacter* OwnerCharacter = Cast<ACharacter>(MeshComp->GetOwner());
     if (!OwnerCharacter) return;
-
-    // 🛸 Set Gravity cho Owner (player)
     if (UCharacterMovementComponent* Movement = OwnerCharacter->GetCharacterMovement())
     {
         Movement->GravityScale = GravityScale;
 
         if (FMath::IsNearlyZero(GravityScale))
         {
-            Movement->Velocity.Z = 0.0f; // Ngừng trôi nếu tắt gravity
+            Movement->Velocity.Z = 0.0f; 
         }
         else
         {
             if (Movement->MovementMode == MOVE_None)
             {
-                Movement->SetMovementMode(MOVE_Falling); // Bật lại Falling nếu trước đó DisableMovement
+                Movement->SetMovementMode(MOVE_Falling); 
             }
         }
     }
-
-    // 🛸 Nếu Owner là Player, set Gravity cho LastHitEnemy
     if (AFighter_Combat_Test1Character* Player = Cast<AFighter_Combat_Test1Character>(OwnerCharacter))
     {
         ACharacter* LastEnemy = Player->LastHitEnemy;
@@ -42,19 +38,17 @@ void UAnimNotify_Control_Gravity::Notify(USkeletalMeshComponent* MeshComp, UAnim
 
                 if (FMath::IsNearlyZero(GravityScale))
                 {
-                    EnemyMovement->Velocity.Z = 0.0f; // Ngừng trôi nếu tắt gravity
+                    EnemyMovement->Velocity.Z = 0.0f; 
                 }
                 else
                 {
                     if (EnemyMovement->MovementMode == MOVE_None)
                     {
-                        EnemyMovement->SetMovementMode(MOVE_Falling); // Bật lại Falling cho enemy nếu cần
+                        EnemyMovement->SetMovementMode(MOVE_Falling); 
                     }
                 }
             }
         }
-
-        // 🔥 Sau khi xử lý xong, Clear LastHitEnemy cho sạch
         Player->LastHitEnemy = nullptr;
     }
 }
