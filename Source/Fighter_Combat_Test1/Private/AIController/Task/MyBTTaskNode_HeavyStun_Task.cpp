@@ -20,22 +20,16 @@ EBTNodeResult::Type UMyBTTaskNode_HeavyStun_Task::ExecuteTask(UBehaviorTreeCompo
 
 	UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
 	if (!BB) return EBTNodeResult::Failed;
-
-	// Kiểm tra stun level
 	int32 StunLevel = BB->GetValueAsInt("StunLevel");
-	if (StunLevel < 2) return EBTNodeResult::Failed; // Đây là task stun mạnh
-
-	// Lấy vật liệu vật lý từ Blackboard
+	if (StunLevel < 2) return EBTNodeResult::Failed; 
 	UObject* PhysMatObj = BB->GetValueAsObject("PhysMatHit");
 	UPhysicalMaterial* PhysMat = Cast<UPhysicalMaterial>(PhysMatObj);
 	if (!PhysMat) return EBTNodeResult::Failed;
 
 	FName MatName = PhysMat->GetFName();
 
-	// Tìm trong map FStunMontageData
 	if (!Character->StunMontages.Contains(MatName))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[HeavyStun] No montage found for PhysMat: %s"), *MatName.ToString());
 		return EBTNodeResult::Failed;
 	}
 
@@ -44,16 +38,12 @@ EBTNodeResult::Type UMyBTTaskNode_HeavyStun_Task::ExecuteTask(UBehaviorTreeCompo
 
 	if (!Montage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[HeavyStun] HeavyStun montage is NULL for PhysMat: %s"), *MatName.ToString());
 		return EBTNodeResult::Failed;
 	}
 
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	if (!AnimInstance) return EBTNodeResult::Failed;
-
-	// Phát animation
 	AnimInstance->Montage_Play(Montage);
-	UE_LOG(LogTemp, Warning, TEXT("[HeavyStun] Played: %s for PhysMat: %s"), *Montage->GetName(), *MatName.ToString());
 
 	return EBTNodeResult::Succeeded;
 }
