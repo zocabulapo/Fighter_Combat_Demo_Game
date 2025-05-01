@@ -112,12 +112,8 @@ void AFighter_Combat_Test1Character::SetupPlayerInputComponent(UInputComponent* 
 
 void AFighter_Combat_Test1Character::Move(const FInputActionValue& Value)
 {
-	if (!canMove || Controller == nullptr) return; // <- check ở đây
-
-	// input là Vector2D
+	if (!canMove || Controller == nullptr) return; 
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	// Tính toán hướng di chuyển
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
@@ -145,21 +141,14 @@ void AFighter_Combat_Test1Character::PerformHeavyAttack()
 {
 	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
 	if (!AnimInstance) return;
-
-	// Nếu đang trên không mà không phải đang attacking => Không cho phép đánh
 	if (GetCharacterMovement()->IsFalling() && !isAttacking)
 	{
-		UE_LOG(LogTemplateCharacter, Warning, TEXT("Cannot heavy attack while falling if not already attacking."));
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("❌ Can't heavy attack midair unless attacking already!"));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("CannotHeavy"));
 		return;
 	}
-
-	// Nếu đang chơi montage light → queue heavy
 	if (IsPlayingMontage(LightAttackMontage))
 	{
 		ComboInput = EComboInputType::HEAVY;
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Queued HEAVY during light combo."));
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Queued HEAVY during light combo."));
 		return;
 	}
 
@@ -167,31 +156,22 @@ void AFighter_Combat_Test1Character::PerformHeavyAttack()
 	if (isAttacking)
 	{
 		ComboInput = EComboInputType::HEAVY;
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Queued HEAVY Combo Input"));
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Queued HEAVY Combo Input"));
 		return;
 	}
-
-	// Tới đây thì cho Play montage mới
 	const float Speed = GetVelocity().Size();
 	isAttacking = true;
-
-	// Nếu đang bay nhanh → chơi Air Attack
 	if (AirAttackMontage && Speed > 500.f && !IsPlayingMontage(AirAttackMontage))
 	{
 		AnimInstance->Montage_Play(AirAttackMontage);
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Started Air Heavy Attack!"));
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Started Air Heavy Attack!"));
 	}
 	else if (HeavyAttackMontage && !IsPlayingMontage(HeavyAttackMontage))
 	{
 		AnimInstance->Montage_Play(HeavyAttackMontage);
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Performed Ground Heavy Attack!"));
 	}
 	else
 	{
 		ComboInput = EComboInputType::HEAVY;
-		UE_LOG(LogTemplateCharacter, Warning, TEXT("HeavyAttackMontage is null or already playing."));
 	}
 }
 
@@ -200,46 +180,32 @@ void AFighter_Combat_Test1Character::PerformLightAttack()
 {
 	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
 	if (!AnimInstance) return;
-
-	// Nếu đang trên không mà không phải đang attacking => Không cho phép đánh
 	if (GetCharacterMovement()->IsFalling() && !isAttacking)
 	{
-		UE_LOG(LogTemplateCharacter, Warning, TEXT("Cannot attack while falling if not already attacking."));
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("❌ Can't attack midair unless attacking already!"));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Cannot Light"));
 		return;
 	}
-
-	// Nếu đang trong heavy combo → chỉ queue input
 	if (IsPlayingMontage(HeavyAttackMontage))
 	{
 		ComboInput = EComboInputType::LIGHT;
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Queued LIGHT during heavy combo."));
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Queued LIGHT during heavy combo."));
 		return;
 	}
-
-	// Nếu đang combo light rồi → queue
 	if (isAttacking)
 	{
 		ComboInput = EComboInputType::LIGHT;
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Queued LIGHT Combo Input"));
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Queued LIGHT Combo Input"));
 		return;
 	}
-
-	// Nếu tới đây thì OK để Play Montage
 	if (LightAttackMontage && !IsPlayingMontage(LightAttackMontage))
 	{
 		AnimInstance->Montage_Play(LightAttackMontage);
 		isAttacking = true;
-
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Performed Light Attack!"));
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Performed Light Attack!"));
 	}
 	else
 	{
 		ComboInput = EComboInputType::LIGHT;
-		UE_LOG(LogTemplateCharacter, Warning, TEXT("LightAttackMontage is null or already playing."));
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("LightAttackMontage is null or already playing."));
 	}
 }
@@ -259,24 +225,6 @@ bool AFighter_Combat_Test1Character::IsPlayingMontage(UAnimMontage* Montage) con
 }
 void AFighter_Combat_Test1Character::RegenerateStamina()
 {
-	// 🔍 Debug log mỗi lần gọi để chắc chắn Timer đang chạy
-	UE_LOG(LogTemp, Log, TEXT("⏱ RegenerateStamina() called"));
-
-	// Log BEFORE regen
-	UE_LOG(LogTemp, Log, TEXT("📊 BEFORE: Current = %.1f / Max = %.1f"), CurrentStamina, MaxStamina);
-
-	// Log lên màn hình
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			1.0f,
-			FColor::Yellow,
-			FString::Printf(TEXT("🕒 Regen Tick: %.1f / %.1f"), CurrentStamina, MaxStamina)
-		);
-	}
-
-	// Thực hiện regen
 	if (CurrentStamina < MaxStamina)
 	{
 		CurrentStamina = FMath::Clamp(CurrentStamina + StaminaRegenRate, 0.f, MaxStamina);
@@ -288,11 +236,11 @@ void AFighter_Combat_Test1Character::Dead()
 {
 	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
 	if (!AnimInstance) return;
-	if (!isDead) // <-- Check lại cho chắc
+	if (!isDead) 
 	{
 		isDead = true;
 		// Phát FuryMontage
-		if (DeadMontage)  // Kiểm tra nếu montage có tồn tại
+		if (DeadMontage) 
 		{
 			AnimInstance->Montage_Play(DeadMontage);
 		}
@@ -304,20 +252,18 @@ void AFighter_Combat_Test1Character::FuryMode()
 {
 	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
 	if (!AnimInstance) return;
-	if (!isFury) // Kiểm tra nếu chưa trong chế độ Fury
+	if (!isFury)
 	{
 		isFury = true;
 
 		// Phát FuryMontage
-		if (FuryMontage)  // Kiểm tra nếu montage có tồn tại
+		if (FuryMontage) 
 		{
 			AnimInstance->Montage_Play(FuryMontage);
 		}
-
-		// Set một bộ hẹn giờ để tắt Fury sau 50 giây
 		GetWorld()->GetTimerManager().SetTimer(FuryTimerHandle, [this]()
 			{
-				isFury = false;  // Dừng chế độ Fury sau 50 giây
+				isFury = false;  
 			}, 50.0f, false);
 	}
 }
