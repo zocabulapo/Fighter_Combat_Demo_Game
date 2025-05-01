@@ -37,7 +37,6 @@ void AEffectCombat::ApplyEffect(ACharacter* TargetCharacter, ESkillEffectType Ef
         break;
     case ESkillEffectType::None:
     default:
-        // Không làm gì
         break;
     }
 }
@@ -50,13 +49,10 @@ void AEffectCombat::LaunchUp(ACharacter* Target, float Strength)
     Forward.Z = 0.f;
     Forward.Normalize();
 
-    float ForwardRatio = 0.4f; // 40% lực bay ngang
+    float ForwardRatio = 0.4f; 
     FVector LaunchVelocity = Forward * (Strength * ForwardRatio) + FVector(0.f, 0.f, Strength);
 
     Target->LaunchCharacter(LaunchVelocity, true, true);
-
-    // Debug
-    UKismetSystemLibrary::PrintString(this, TEXT("LaunchUp: Hất tung + Lao tới! 🚀"), true, true, FLinearColor::Green, 1.5f);
 }
 
 void AEffectCombat::PushBack(ACharacter* Target, FVector Direction, float Strength)
@@ -71,26 +67,16 @@ void AEffectCombat::PushBack(ACharacter* Target, FVector Direction, float Streng
 
     FVector LaunchVelocity = Direction * Strength;
     Target->LaunchCharacter(LaunchVelocity, true, true);
-
-    // Debug
-    UKismetSystemLibrary::PrintString(this, TEXT("PushBack: Bị đẩy lùi! 💥"), true, true, FLinearColor::Red, 1.5f);
 }
 
 void AEffectCombat::SmashDown(ACharacter* Target, float Strength)
 {
     if (!Target) return;
-
-    // Set Gravity Scale lên 1.75
     UCharacterMovementComponent* MoveComp = Target->GetCharacterMovement();
     if (MoveComp)
     {
         MoveComp->GravityScale = 1.75f;
     }
-
-    // Bắn nó xuống
     FVector LaunchVelocity = FVector(0.f, 0.f, -Strength);
     Target->LaunchCharacter(LaunchVelocity, true, true);
-
-    // Debug
-    UKismetSystemLibrary::PrintString(this, TEXT("SmashDown: Đập xuống! 💣"), true, true, FLinearColor::Blue, 1.5f);
 }
