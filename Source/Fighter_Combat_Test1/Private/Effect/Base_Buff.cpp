@@ -24,20 +24,15 @@ void ABase_Buff::InitializeBuff(AActor* Target, EBuffType Type)
 
 void ABase_Buff::ApplyBuff()
 {
-	// Kiểm tra nếu TargetActor là ACharacter
 	if (TargetActor == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetActor is null!"));
 		return;
 	}
-
-	// Áp dụng Buff theo loại
 	switch (BuffType)
 	{
 	case EBuffType::Burn:
 		if (BurnEffect && TargetActor->IsA(ACharacter::StaticClass()))
 		{
-			// Gọi hiệu ứng lửa cho Burn
 			ActiveEffect = UGameplayStatics::SpawnEmitterAttached(
 				BurnEffect,
 				Cast<ACharacter>(TargetActor)->GetMesh(),
@@ -53,7 +48,6 @@ void ABase_Buff::ApplyBuff()
 	case EBuffType::Poison:
 		if (PoisonEffect && TargetActor->IsA(ACharacter::StaticClass()))
 		{
-			// Gọi hiệu ứng nọc độc cho Poison
 			ActiveEffect = UGameplayStatics::SpawnEmitterAttached(
 				PoisonEffect,
 				Cast<ACharacter>(TargetActor)->GetMesh(),
@@ -73,7 +67,6 @@ void ABase_Buff::ApplyBuff()
 
 void ABase_Buff::ApplyDamageOverTime()
 {
-	// Nếu có đối tượng target thì tiến hành giảm HP
 	if (TargetActor)
 	{
 		if (ACharacter* Character = Cast<ACharacter>(TargetActor))
@@ -88,20 +81,17 @@ void ABase_Buff::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Cập nhật thời gian
 	ElapsedTime += DeltaTime;
 
-	// Kiểm tra nếu thời gian đã đủ để gỡ bỏ buff
 	if (ElapsedTime >= Duration)
 	{
 		RemoveBuff();
 	}
 
-	// Áp dụng sát thương theo thời gian mỗi 1 giây
 	if (ElapsedTime >= 1.0f)
 	{
 		ApplyDamageOverTime();
-		ElapsedTime = 0.0f; // Reset lại thời gian sau mỗi lần áp dụng sát thương
+		ElapsedTime = 0.0f; 
 	}
 }
 
