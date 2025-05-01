@@ -9,10 +9,8 @@ void UAsssassin_AnimationBlueprint::NativeUpdateAnimation(float DeltaSeconds)
 	APawn* OwnerPawn = TryGetPawnOwner();
 	if (!OwnerPawn) return;
 
-	// Lấy tốc độ từ velocity
 	Speed = OwnerPawn->GetVelocity().Size();
 
-	// Kiểm tra nhân vật có đang bay không
 	ACharacter* Character = Cast<ACharacter>(OwnerPawn);
 	if (Character)
 	{
