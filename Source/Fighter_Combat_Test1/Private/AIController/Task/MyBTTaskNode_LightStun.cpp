@@ -22,7 +22,7 @@ EBTNodeResult::Type UMyBTTaskNode_LightStun::ExecuteTask(UBehaviorTreeComponent&
 	if (!BB) return EBTNodeResult::Failed;
 
 	int32 StunLevel = BB->GetValueAsInt("StunLevel");
-	if (StunLevel != 1) return EBTNodeResult::Failed; // Đây là task stun nhẹ
+	if (StunLevel != 1) return EBTNodeResult::Failed; 
 
 	UObject* PhysMatObj = BB->GetValueAsObject("PhysMatHit");
 	UPhysicalMaterial* PhysMat = Cast<UPhysicalMaterial>(PhysMatObj);
@@ -41,7 +41,6 @@ EBTNodeResult::Type UMyBTTaskNode_LightStun::ExecuteTask(UBehaviorTreeComponent&
 	if (!AnimInstance) return EBTNodeResult::Failed;
 
 	AnimInstance->Montage_Play(Montage);
-	UE_LOG(LogTemp, Warning, TEXT("[LightStun] Played: %s for PhysMat: %s"), *Montage->GetName(), *MatName.ToString());
 
 	return EBTNodeResult::Succeeded;
 }
