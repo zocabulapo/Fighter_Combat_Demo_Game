@@ -27,7 +27,6 @@ protected:
 public:
     virtual void Tick(float DeltaTime) override;
 
-    /** Gọi để apply hiệu ứng */
     UFUNCTION(BlueprintCallable, Category = "Skill Effect")
     void ApplyEffect(ACharacter* TargetCharacter, ESkillEffectType EffectType, FVector Direction = FVector::ZeroVector, float Strength = 1000.f);
 
