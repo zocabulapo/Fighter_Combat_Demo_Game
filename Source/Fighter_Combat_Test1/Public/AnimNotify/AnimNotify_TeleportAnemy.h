@@ -16,6 +16,6 @@ public:
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Teleport")
-    float TeleportDistance = 100.0f; // Khoảng cách cách enemy sau khi teleport
+    float TeleportDistance = 100.0f; 
 
 };
