@@ -9,11 +9,8 @@ void UAnimNotifyState_CheckCombo::NotifyTick(USkeletalMeshComponent* MeshComp, U
     if (!Player) return;
     if (bRequireEnemyHit && Player->ComboInput != EComboInputType::LIGHT && !IsValid(Player->LastHitEnemy))
     {
-        UE_LOG(LogTemp, Warning, TEXT("❌ No enemy hit — combo blocked."));
         return;
     }
-
-    UE_LOG(LogTemp, Warning, TEXT("Combo Input Detected: %d"), (uint8)Player->ComboInput);
 
     UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
     if (AnimInstance && Animation)
@@ -34,11 +31,8 @@ void UAnimNotifyState_CheckCombo::NotifyTick(USkeletalMeshComponent* MeshComp, U
         default:
             break;
         }
-
-        // ❗ Check stamina trước khi combo tiếp
         if (Cost > 0.f && Player->CurrentStamina < Cost)
         {
-            UE_LOG(LogTemp, Warning, TEXT("❌ Not enough stamina to continue combo."));
             return;
         }
 
@@ -46,12 +40,10 @@ void UAnimNotifyState_CheckCombo::NotifyTick(USkeletalMeshComponent* MeshComp, U
         {
             AnimInstance->Montage_JumpToSection(TargetSection, Cast<UAnimMontage>(Animation));
             Player->CurrentStamina = FMath::Max(0.f, Player->CurrentStamina - Cost);
-
-            UE_LOG(LogTemp, Warning, TEXT("✅ Jumped to section: %s | 🔋 Stamina: %.1f"), *TargetSection.ToString(), Player->CurrentStamina);
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("⚠️ No target section set for combo input."));
+            UE_LOG(LogTemp, Warning, TEXT("No combo input."));
         }
 
         Player->ResetCombo();
