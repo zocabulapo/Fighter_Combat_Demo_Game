@@ -47,18 +47,15 @@ void UAnimNotifyState_ApproachEnemy::NotifyTick(USkeletalMeshComponent* MeshComp
 		FVector ToEnemy = (ClosestEnemy->GetActorLocation() - Character->GetActorLocation()).GetSafeNormal();
 		Character->AddMovementInput(ToEnemy, MoveSpeed * FrameDeltaTime);
 
-		// Blend xoay siêu mượt
 		FRotator CurrentRot = Character->GetActorRotation();
 		FRotator TargetRot = FRotationMatrix::MakeFromX(ToEnemy).Rotator();
 		TargetRot.Pitch = 0.f;
 		TargetRot.Roll = 0.f;
 
-		// Tăng tốc độ blend mượt hơn
-		const float RotationInterpSpeed = 12.0f; // Tùy chỉnh max mượt - 12 tới 15f là đẹp
+		const float RotationInterpSpeed = 12.0f; 
 		FRotator SmoothRot = FMath::RInterpTo(CurrentRot, TargetRot, FrameDeltaTime, RotationInterpSpeed);
 		Character->SetActorRotation(SmoothRot);
 
-		// Đồng bộ mượt luôn Controller
 		AController* Controller = Character->GetController();
 		if (Controller)
 		{
