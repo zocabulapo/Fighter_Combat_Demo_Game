@@ -21,29 +21,23 @@ void UAnimNotify_TeleportAnemy::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
         ACharacter* Target = Player->LastHitEnemy;
         if (!Target) return;
 
-        // Vị trí hiện tại của mục tiêu
         FVector TargetLocation = Target->GetActorLocation();
 
-        // Offset nhẹ ra phía sau để không đứng dính nhau
         FVector BackOffset = Target->GetActorForwardVector() * -100.0f;
         FVector TeleportLocation = TargetLocation + BackOffset;
 
-        // Teleport nhân vật tới vị trí mới
         Player->SetActorLocation(TeleportLocation, false, nullptr, ETeleportType::TeleportPhysics);
 
-
-        // === Bắt Target đứng yên ===
         UCharacterMovementComponent* TargetMovement = Target->GetCharacterMovement();
         if (TargetMovement)
         {
             TargetMovement->DisableMovement();
         }
 
-        // === Player đứng lơ lửng vĩnh viễn cho tới khi có lệnh mới ===
         UCharacterMovementComponent* PlayerMovement = Player->GetCharacterMovement();
         if (PlayerMovement)
         {
-            PlayerMovement->GravityScale = 0.0f; // Tắt gravity, không set timer bật lại
+            PlayerMovement->GravityScale = 0.0f; 
         }
     }
 }
