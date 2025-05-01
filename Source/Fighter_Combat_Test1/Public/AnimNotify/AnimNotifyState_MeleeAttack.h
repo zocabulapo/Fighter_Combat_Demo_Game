@@ -20,7 +20,6 @@ public:
 
 
 protected:
-	// Các biến có thể chỉnh trong Blueprint
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trace")
 	FName SocketStart = "arm_l";
 
