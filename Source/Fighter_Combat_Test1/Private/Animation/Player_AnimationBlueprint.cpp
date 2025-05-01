@@ -34,14 +34,12 @@ void UPlayer_AnimationBlueprint::NativeUpdateAnimation(float DeltaSeconds)
 
     bool bRealFalling = MovementComponent->IsFalling();
 
-    // ==== Lấy isAttacking từ Character ====
     AFighter_Combat_Test1Character* MyPlayer = Cast<AFighter_Combat_Test1Character>(Character);
     if (MyPlayer)
     {
         isAttacking = MyPlayer->isAttacking;
     }
 
-    // ==== Gán Falling dựa trên Attack state ====
     if (isAttacking)
     {
         bIsFalling = false;
